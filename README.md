@@ -1,4 +1,4 @@
-# GitHub Tag Action
+# GitHub Bump & Tag Action
 
 A Github Action to automatically bump and tag certain commit, with the latest SemVer formatted version. Based on [`mathieudutour/github-tag-action`](https://github.com/mathieudutour/github-tag-action) action.
 

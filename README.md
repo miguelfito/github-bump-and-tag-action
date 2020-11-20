@@ -19,7 +19,7 @@ jobs:
 
       - name: Bump version and push tag
         id: tag_version
-        uses: miguelfito/github-bump-and-tag@v1
+        uses: miguelfito/github-bump-and-tag-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 

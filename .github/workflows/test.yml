@@ -1,0 +1,22 @@
+name: "Test typescript-action"
+on:
+    pull_request:
+    push:
+        branches:
+            - "*"
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout branch to integrate
+              uses: actions/checkout@v2
+              with:
+                  ref: ${{ github.head_ref }}
+                  fetch-depth: 0
+
+            - name: Run npm ci
+              run: npm ci
+
+            - name: Run npm build
+              run: npm run build

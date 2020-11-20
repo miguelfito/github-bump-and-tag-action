@@ -1,0 +1,37 @@
+{
+  "name": "github-bump-and-tag-action",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Github Action to automatically bump and tag certain commit, with the latest SemVer formatted version",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "git log --pretty=format:%s | head -n 1 | npx devmoji --lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miguelfito/github-bump-and-tag-action.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup"
+  ],
+  "author": "Miguel Ángel Melón",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^2.2.0",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/release-notes-generator": "^9.0.1",
+    "semver": "^7.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.5",
+    "@types/semver": "^7.1.0",
+    "typescript": "^3.8.3",
+    "devmoji": "^2.1.11",
+    "husky": "^4.3.0"
+  }
+}

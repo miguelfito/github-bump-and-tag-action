@@ -1,0 +1,56 @@
+name: "GitHub Bump & Tag"
+description: "Bump and tag certain commit, with the latest SemVer formatted version"
+author: "Miguel Ángel Melón"
+outputs:
+    new_tag:
+        description: "Generated tag"
+    new_version:
+        description: "Generated tag without the prefix"
+    previous_tag:
+        description: "Previous tag (or `0.0.0`)"
+    changelog:
+        description: "The conventional changelog since the previous tag"
+inputs:
+    github_token:
+        description: "Required for permission to tag the repo."
+        required: true
+    commit_sha:
+        description: "Which commit id want to tag (default: `GITHUB_SHA`)"
+        required: false
+        default: GITHUB_SHA
+    default_bump:
+        description: "Which type of bump to use when none explicitly provided (default: `patch`)."
+        required: false
+        default: "patch"
+    tag_prefix:
+        description: "A prefix to the tag name (default: `v`)."
+        required: false
+        default: "v"
+    append_to_pre_release_tag:
+        description: "A suffix to a pre-release tag name (default: `<branch>`)."
+        required: false
+    custom_tag:
+        description: "Custom tag name. If specified, it overrides bump settings."
+        required: false
+    release_branches:
+        description: "Comma separated list of branches (bash reg exp accepted) that will generate the release tags. Other branches and pull-requests generate versions postfixed with the commit hash and do not generate any tag. Examples: `master` or `.*` or `release.*,hotfix.*,master`..."
+        required: false
+        default: "master"
+    pre_release_branches:
+        description: "Comma separated list of branches (bash reg exp accepted) that will generate pre-release tags."
+        required: false
+    create_annotated_tag:
+        description: "Boolean to create an annotated tag rather than lightweight"
+        required: false
+        default: "false"
+    dry_run:
+        description: "Do not perform tagging, just calculate next version and changelog, then exit"
+        required: false
+        default: "false"
+
+runs:
+    using: "node12"
+    main: "lib/main.js"
+branding:
+    icon: "git-merge"
+    color: "purple"

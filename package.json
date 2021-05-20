@@ -30,8 +30,8 @@
   "devDependencies": {
     "@types/node": "^13.13.5",
     "@types/semver": "^7.1.0",
-    "typescript": "^3.8.3",
     "devmoji": "^2.1.11",
-    "husky": "^4.3.0"
+    "husky": "^4.3.0",
+    "typescript": "^3.8.3"
   }
 }

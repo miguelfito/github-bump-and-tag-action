@@ -154,7 +154,7 @@ async function run() {
     }
 
     await createTag(newTag, createAnnotatedTag, commitSha);
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(error.message);
   }
 }

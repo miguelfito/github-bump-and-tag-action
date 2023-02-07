@@ -1,9 +1,6 @@
 {
   "name": "github-bump-and-tag-action",
   "version": "1.0.0",
-  "engines": {
-    "node": ">=18.12.1"
-  },
   "private": true,
   "description": "A Github Action to automatically bump and tag certain commit, with the latest SemVer formatted version",
   "main": "lib/main.js",

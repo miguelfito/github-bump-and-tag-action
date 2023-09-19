@@ -23,7 +23,7 @@
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^2.2.0",
-    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/commit-analyzer": "^11.0.0",
     "@semantic-release/release-notes-generator": "^11.0.2",
     "semver": "^7.5.3"
   },

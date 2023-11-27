@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
-    "@types/semver": "^7.5.5",
+    "@types/semver": "^7.5.6",
     "devmoji": "^2.3.0",
     "husky": "^8.0.3",
     "typescript": "^5.2.2"

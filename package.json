@@ -31,7 +31,7 @@
     "@types/node": "^20.11.10",
     "@types/semver": "^7.5.6",
     "devmoji": "^2.3.0",
-    "husky": "^9.0.6",
+    "husky": "^9.0.10",
     "typescript": "^5.3.3"
   }
 }

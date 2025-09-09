@@ -95,3 +95,12 @@ typings/
 
 # IntelliJ
 .idea/
+
+# Bun
+bun.lockb
+
+# Husky
+.husky
+
+# MacOS
+.DS_Store

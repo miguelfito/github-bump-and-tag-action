@@ -362,6 +362,7 @@ export class Tokenizer {
     if (cap) {
       const token = {
         type: 'html',
+        block: true,
         raw: cap[0],
         pre: !this.options.sanitizer
           && (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
@@ -519,6 +520,7 @@ export class Tokenizer {
         raw: cap[0],
         inLink: this.lexer.state.inLink,
         inRawBlock: this.lexer.state.inRawBlock,
+        block: false,
         text: this.options.sanitize
           ? (this.options.sanitizer
             ? this.options.sanitizer(cap[0])
@@ -611,7 +613,7 @@ export class Tokenizer {
 
     const nextChar = match[1] || match[2] || '';
 
-    if (!nextChar || (nextChar && (prevChar === '' || this.rules.inline.punctuation.exec(prevChar)))) {
+    if (!nextChar || !prevChar || this.rules.inline.punctuation.exec(prevChar)) {
       const lLength = match[0].length - 1;
       let rDelim, rLength, delimTotal = lLength, midDelimTotal = 0;
 
@@ -645,7 +647,7 @@ export class Tokenizer {
         // Remove extra characters. *a*** -> *a*
         rLength = Math.min(rLength, rLength + delimTotal + midDelimTotal);
 
-        const raw = src.slice(0, lLength + match.index + (match[0].length - rDelim.length) + rLength);
+        const raw = src.slice(0, lLength + match.index + rLength + 1);
 
         // Create `em` if smallest delimiter has odd char count. *a***
         if (Math.min(lLength, rLength) % 2) {

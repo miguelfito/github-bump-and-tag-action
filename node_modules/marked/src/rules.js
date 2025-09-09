@@ -26,7 +26,7 @@ export const block = {
     + ')',
   def: /^ {0,3}\[(label)\]: *(?:\n *)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
   table: noopTest,
-  lheading: /^((?:.|\n(?!\n))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
+  lheading: /^((?:(?!^bull ).|\n(?!\n|bull ))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
   // regex template, placeholders will be replaced according to different paragraph
   // interruption rules of commonmark and the original markdown spec:
   _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,
@@ -62,6 +62,10 @@ block.html = edit(block.html, 'i')
   .replace('comment', block._comment)
   .replace('tag', block._tag)
   .replace('attribute', / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/)
+  .getRegex();
+
+block.lheading = edit(block.lheading)
+  .replace(/bull/g, block.bullet) // lists can interrupt
   .getRegex();
 
 block.paragraph = edit(block._paragraph)
@@ -168,45 +172,49 @@ export const inline = {
   nolink: /^!?\[(ref)\](?:\[\])?/,
   reflinkSearch: 'reflink|nolink(?!\\()',
   emStrong: {
-    lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
-    //        (1) and (2) can only be a Right Delimiter. (3) and (4) can only be Left.  (5) and (6) can be either Left or Right.
-    //          () Skip orphan inside strong                                      () Consume to delim     (1) #***                (2) a***#, a***                             (3) #***a, ***a                 (4) ***#              (5) #***#                 (6) a***a
-    rDelimAst: /^(?:[^_*\\]|\\.)*?\_\_(?:[^_*\\]|\\.)*?\*(?:[^_*\\]|\\.)*?(?=\_\_)|(?:[^*\\]|\\.)+(?=[^*])|[punct_](\*+)(?=[\s]|$)|(?:[^punct*_\s\\]|\\.)(\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|(?:[^punct*_\s\\]|\\.)(\*+)(?=[^punct*_\s])/,
-    rDelimUnd: /^(?:[^_*\\]|\\.)*?\*\*(?:[^_*\\]|\\.)*?\_(?:[^_*\\]|\\.)*?(?=\*\*)|(?:[^_\\]|\\.)+(?=[^_])|[punct*](\_+)(?=[\s]|$)|(?:[^punct*_\s\\]|\\.)(\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/ // ^- Not allowed for _
+    lDelim: /^(?:\*+(?:((?!\*)[punct])|[^\s*]))|^_+(?:((?!_)[punct])|([^\s_]))/,
+    //         (1) and (2) can only be a Right Delimiter. (3) and (4) can only be Left.  (5) and (6) can be either Left or Right.
+    //         | Skip orphan inside strong      | Consume to delim | (1) #***              | (2) a***#, a***                    | (3) #***a, ***a                  | (4) ***#                 | (5) #***#                         | (6) a***a
+    rDelimAst: /^[^_*]*?__[^_*]*?\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\*)[punct](\*+)(?=[\s]|$)|[^punct\s](\*+)(?!\*)(?=[punct\s]|$)|(?!\*)[punct\s](\*+)(?=[^punct\s])|[\s](\*+)(?!\*)(?=[punct])|(?!\*)[punct](\*+)(?!\*)(?=[punct])|[^punct\s](\*+)(?=[^punct\s])/,
+    rDelimUnd: /^[^_*]*?\*\*[^_*]*?_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|(?!_)[punct](_+)(?=[\s]|$)|[^punct\s](_+)(?!_)(?=[punct\s]|$)|(?!_)[punct\s](_+)(?=[^punct\s])|[\s](_+)(?!_)(?=[punct])|(?!_)[punct](_+)(?!_)(?=[punct])/ // ^- Not allowed for _
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
   del: noopTest,
   text: /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,
-  punctuation: /^([\spunctuation])/
+  punctuation: /^((?![*_])[\spunctuation])/
 };
 
-// list of punctuation marks from CommonMark spec
-// without * and _ to handle the different emphasis markers * and _
-inline._punctuation = '!"#$%&\'()+\\-.,/:;<=>?@\\[\\]`^{|}~';
-inline.punctuation = edit(inline.punctuation).replace(/punctuation/g, inline._punctuation).getRegex();
+// list of unicode punctuation marks, plus any missing characters from CommonMark spec
+inline._punctuation = '\\p{P}$+<=>`^|~';
+inline.punctuation = edit(inline.punctuation, 'u').replace(/punctuation/g, inline._punctuation).getRegex();
 
 // sequences em should skip over [title](link), `code`, <html>
-inline.blockSkip = /\[[^\]]*?\]\([^\)]*?\)|`[^`]*?`|<[^>]*?>/g;
-// lookbehind is not available on Safari as of version 16
-// inline.escapedEmSt = /(?<=(?:^|[^\\)(?:\\[^])*)\\[*_]/g;
-inline.escapedEmSt = /(?:^|[^\\])(?:\\\\)*\\[*_]/g;
+inline.blockSkip = /\[[^[\]]*?\]\([^\(\)]*?\)|`[^`]*?`|<[^<>]*?>/g;
+inline.anyPunctuation = /\\[punct]/g;
+inline._escapes = /\\([punct])/g;
 
 inline._comment = edit(block._comment).replace('(?:-->|$)', '-->').getRegex();
 
-inline.emStrong.lDelim = edit(inline.emStrong.lDelim)
+inline.emStrong.lDelim = edit(inline.emStrong.lDelim, 'u')
   .replace(/punct/g, inline._punctuation)
   .getRegex();
 
-inline.emStrong.rDelimAst = edit(inline.emStrong.rDelimAst, 'g')
+inline.emStrong.rDelimAst = edit(inline.emStrong.rDelimAst, 'gu')
   .replace(/punct/g, inline._punctuation)
   .getRegex();
 
-inline.emStrong.rDelimUnd = edit(inline.emStrong.rDelimUnd, 'g')
+inline.emStrong.rDelimUnd = edit(inline.emStrong.rDelimUnd, 'gu')
   .replace(/punct/g, inline._punctuation)
   .getRegex();
 
-inline._escapes = /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g;
+inline.anyPunctuation = edit(inline.anyPunctuation, 'gu')
+  .replace(/punct/g, inline._punctuation)
+  .getRegex();
+
+inline._escapes = edit(inline._escapes, 'gu')
+  .replace(/punct/g, inline._punctuation)
+  .getRegex();
 
 inline._scheme = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/;
 inline._email = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/;

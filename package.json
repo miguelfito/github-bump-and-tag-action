@@ -25,11 +25,11 @@
     "@actions/github": "^2.2.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/release-notes-generator": "^14.1.0",
-    "semver": "^7.7.1"
+    "semver": "^7.7.2"
   },
   "devDependencies": {
     "@types/node": "^24.4.0",
-    "@types/semver": "^7.5.8",
+    "@types/semver": "^7.7.1",
     "devmoji": "^2.3.0",
     "husky": "^9.1.7",
     "typescript": "^5.9.2"

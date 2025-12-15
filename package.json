@@ -20,7 +20,7 @@
   "author": "Miguel Ángel Melón",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.11.1",
+    "@actions/core": "^2.0.1",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^2.2.0",
     "@semantic-release/commit-analyzer": "^13.0.1",

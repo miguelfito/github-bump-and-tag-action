@@ -95,3 +95,6 @@ typings/
 
 # IntelliJ
 .idea/
+
+# MacOS
+.DS_Store
